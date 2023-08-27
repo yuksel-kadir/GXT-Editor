@@ -57,6 +57,7 @@ namespace GTXEditor
             return dictionary;
         }
 
+
         public static string CallExeWithArguments(string exePath, string arguments)
         {
 
@@ -64,7 +65,7 @@ namespace GTXEditor
             {
                 try
                 {
-                    string command = exePath + " " + arguments;
+                    string command = $"{exePath} {arguments}";
                     process.Start();
                     process.StandardInput.WriteLine(command);
                     process.StandardInput.Flush();

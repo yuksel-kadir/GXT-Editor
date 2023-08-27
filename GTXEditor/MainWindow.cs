@@ -18,7 +18,7 @@ namespace GTXEditor
         private StringBuilder logBuilder = new StringBuilder();
         private static PrivateFontCollection privateFonts = new PrivateFontCollection();
         private int lastFoundRowIndex = -1;
-        
+
         public enum CustomFonts
         {
             BankGothic = 0,
@@ -189,20 +189,30 @@ namespace GTXEditor
             MessageBox.Show("Value not found.");
         }
 
-        private string DecompileSelectedGXTFile(string filePath)
+        private void ClearTable()
         {
             GXTTable.Rows.Clear();
-            string filePathWithoutExtension = filePath.Replace(".gxt", "");
-            string decompileArguments = $"-i {filePath} -o {filePathWithoutExtension}.txt";
+        }
+
+        private string DecompileSelectedGXTFile(string inputFilePath)
+        {
+            ClearTable();
+            inputFilePath = inputFilePath.Replace(" ", "` ");
+            string outputFilePath = inputFilePath.Replace(".gxt", ".txt");
+            string decompileArguments = $"-i {inputFilePath} -o {outputFilePath}";
 
             string workingDirectory = Directory.GetCurrentDirectory();
             string absoluteExePath = workingDirectory + EXE_PATH;
-            string commandExitStatus = Utility.CallExeWithArguments(absoluteExePath, decompileArguments);
+            string commandExitStatus = Utility.CallExeWithArguments(absoluteExePath.Replace(" ", "` "), decompileArguments);
             if (commandExitStatus.Length == 0)
             {
-                return filePathWithoutExtension + ".txt";
+                return outputFilePath.Replace("` ", " ");
             }
-            return "";
+            else
+            {
+                MessageBox.Show($"An error occurred: {commandExitStatus}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return "";
+            }
         }
 
         private void CompileCurrentGXTTableToGXTFile()
@@ -263,7 +273,7 @@ namespace GTXEditor
                 {
                     Log($"Selected file copied to: {newFilePath}");
                     string decompiledFilePath = DecompileSelectedGXTFile(newFilePath);
-                    if (decompiledFilePath.Length != 0)
+                    if (!string.IsNullOrEmpty(decompiledFilePath))
                     {
                         Log($"Decompiled file path: {decompiledFilePath}");
                         Log($"Reading decompiled file {decompiledFilePath} ...");
