@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace GTXEditor
 {
@@ -58,7 +59,7 @@ namespace GTXEditor
         }
 
 
-        public static string CallExeWithArguments(string exePath, string arguments)
+        public static string DecompileGXTFile(string exePath, string arguments)
         {
 
             using (Process process = new Process { StartInfo = startInfo })
@@ -70,12 +71,18 @@ namespace GTXEditor
                     process.StandardInput.WriteLine(command);
                     process.StandardInput.Flush();
                     process.StandardInput.Close();
+                    string consoleOutput = process.StandardOutput.ReadToEnd();
+                    Console.WriteLine(consoleOutput);
                     process.WaitForExit();
-
+                    Console.WriteLine("sfgsgfsfg");
                     int exitCode = process.ExitCode;
                     if (exitCode == 0)
                     {
-                        Console.WriteLine(process.StandardOutput.ReadToEnd());
+                        
+                        if (consoleOutput.ToLower().Contains("bad allocation"))
+                        {
+                            return $"Decompiling failed: Bad Allocation. Couldn't decompile the gxt file.";
+                        }
                         Console.WriteLine("Command ran successfully.");
                         return "";
                     }
@@ -92,6 +99,77 @@ namespace GTXEditor
                 }
 
             }
+        }
+
+        public static string RunOpenWithWindow(string arguments)
+        {
+            try
+            {
+                ProcessStartInfo startInfo = new ProcessStartInfo
+                {
+                    UseShellExecute = true,
+                    FileName = "rundll32.exe",
+                    Arguments = $"shell32.dll,OpenAs_RunDLL {arguments}"
+                };
+
+                Process process = new Process
+                {
+                    StartInfo = startInfo
+                };
+                process.Start();
+                process.WaitForExit();
+                return "";
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;                
+            }
+        }
+
+        public static Dictionary<string, Dictionary<string, string>> TestReadTables(string filePath)
+        {
+            string[] lines = File.ReadAllLines(filePath);
+
+            Dictionary<string, Dictionary<string, string>> baseDictionary = new Dictionary<string, Dictionary<string, string>>();
+            
+            string currentTable = "MAIN";
+            string currentKey = null;
+            baseDictionary.Add(currentTable, new Dictionary<string, string>());
+
+            foreach (string line in lines)
+            {
+                string trimmedLine = line.Trim();
+
+                Match tableMatch = Regex.Match(trimmedLine, @"^{=+ MISSION TABLE (.+) =+}$");
+                if (tableMatch.Success)
+                {
+                    currentTable = tableMatch.Groups[1].Value;
+                    baseDictionary[currentTable] = new Dictionary<string, string>();
+                }
+                else if (trimmedLine.StartsWith("[") && trimmedLine.EndsWith("]"))
+                {
+                    currentKey = trimmedLine.Substring(1, trimmedLine.Length - 2);
+                    if (!baseDictionary[currentTable].ContainsKey(currentKey))
+                    {
+                        baseDictionary[currentTable].Add(currentKey, "");
+                    }                    
+                }
+                else if (currentKey != null && !string.IsNullOrEmpty(trimmedLine))
+                {
+                    baseDictionary[currentTable][currentKey] = trimmedLine;
+                }
+            }
+
+            foreach (var table in baseDictionary)
+            {
+                Console.WriteLine($"Table: {table.Key}");
+                foreach (var entry in table.Value)
+                {
+                    Console.WriteLine($"  Key: {entry.Key}");
+                    Console.WriteLine($"  Value: {entry.Value}");
+                }
+            }
+            return baseDictionary;
         }
     }
 }

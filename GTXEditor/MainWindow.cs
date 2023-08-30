@@ -1,23 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Text;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
+using System.Linq;
+
 
 namespace GTXEditor
 {
     public partial class MainWindow : Form
     {
         private const string EXE_PATH = @"\Compiler\gxt.exe";
-        private const string CURRENT_FILE_LABEL = "Current File Path: ";
+        private const string CURRENT_FILE_LABEL = "Current Text File Path: ";
+        private const string PREVIEW_TEXT = "Preview Text";
+        private const string OPEN_GXT_FILE_WARNING_MESSAGE = "Please open a GXT file first.";
+        private const string MISSION_TABLE_LINE = "{=================================== MISSION TABLE AMBULAE ===================================}";
+
         private string lastSearchKeyword = "";
-        private string currentFilePath = "";
+        private string currentTextFilePath = "";
         private readonly string[] fontNames = { "Bank Gothic", "Beckett", "GTA VC Regular", "Old English", "Rage Italic" };
+
         private StringBuilder logBuilder = new StringBuilder();
         private static PrivateFontCollection privateFonts = new PrivateFontCollection();
         private int lastFoundRowIndex = -1;
+
+        private Dictionary<string, string> currentDictionary;
+        Dictionary<string, Dictionary<string, string>> baseDictionary;// = new Dictionary<string, Dictionary<string, string>>();
 
         public enum CustomFonts
         {
@@ -34,6 +45,7 @@ namespace GTXEditor
             LoadCustomFont();
             InitializePreviewText();
             DisableComponentsBeforeTableLoaded();
+            InitializeDataGridView();
         }
 
         private void InitializePreviewText()
@@ -44,12 +56,44 @@ namespace GTXEditor
             GXTValueTextBox.Font = customFont;
         }
 
+        private void InitializeDataGridView()
+        {
+            GXTTable.VirtualMode = true;
+            GXTTable.CellValueNeeded += GXTTable_CellValueNeeded;
+        }
+
+        private void LoadDataToDataGridView(Dictionary<string, string> dictionary)
+        {
+            currentDictionary = dictionary;
+            GXTTable.RowCount = currentDictionary.Count;
+        }
+
+        private void GXTTable_CellValueNeeded(object sender, DataGridViewCellValueEventArgs e)
+        {
+            if (e.RowIndex >= currentDictionary.Count || e.RowIndex < 0)
+                return;
+
+            KeyValuePair<string, string> rowData = currentDictionary.ElementAt(e.RowIndex);
+
+            if (e.ColumnIndex == 0)
+            {
+                e.Value = rowData.Key;
+            }
+            else if (e.ColumnIndex == 1)
+            {
+                e.Value = rowData.Value;
+            }
+        }
+
+
+
         private void DisableComponentsBeforeTableLoaded()
         {
             searchButton.Enabled = false;
             refreshTableButton.Enabled = false;
             compileTableButton.Enabled = false;
             GXTTable.Enabled = false;
+            buttonOpenWith.Enabled = false;
         }
 
         private void EnableComponentsAfterTableLoaded()
@@ -58,6 +102,7 @@ namespace GTXEditor
             refreshTableButton.Enabled = true;
             compileTableButton.Enabled = true;
             GXTTable.Enabled = true;
+            buttonOpenWith.Enabled = true;
         }
 
         private void LoadCustomFont()
@@ -181,7 +226,8 @@ namespace GTXEditor
                 {
                     GXTTable.CurrentCell = GXTTable.Rows[rowIndex].Cells[1]; // Select the cell
                     GXTTable.FirstDisplayedScrollingRowIndex = rowIndex; // Scroll to the row
-                    lastFoundRowIndex = rowIndex; // Update the last found index
+                    lastFoundRowIndex = rowIndex; // Update the last found index                   
+                    ChangePreviewText(GXTTable.Rows[rowIndex].Cells[1].Value.ToString());
                     return; // Found and selected the row
                 }
             }
@@ -196,14 +242,28 @@ namespace GTXEditor
 
         private string DecompileSelectedGXTFile(string inputFilePath)
         {
-            ClearTable();
-            inputFilePath = inputFilePath.Replace(" ", "` ");
-            string outputFilePath = inputFilePath.Replace(".gxt", ".txt");
+            inputFilePath = inputFilePath.Replace(" ", "` "); //Add backtick character before any space character in path. The powershell command doesn't work without backtick character.
+            string outputFilePath = "";
+            
+            if (inputFilePath.Contains(".GXT"))
+            {
+                outputFilePath = inputFilePath.Replace(".GXT", ".txt");
+            }
+            else if (inputFilePath.Contains(".gxt"))
+            {
+                outputFilePath = inputFilePath.Replace(".gxt", ".txt");
+            }            
+
             string decompileArguments = $"-i {inputFilePath} -o {outputFilePath}";
+            if (radioSA.Checked)
+            {
+                decompileArguments += " -k CRC32 -w0 -h1";
+            }
+
 
             string workingDirectory = Directory.GetCurrentDirectory();
             string absoluteExePath = workingDirectory + EXE_PATH;
-            string commandExitStatus = Utility.CallExeWithArguments(absoluteExePath.Replace(" ", "` "), decompileArguments);
+            string commandExitStatus = Utility.DecompileGXTFile(absoluteExePath.Replace(" ", "` "), decompileArguments);
             if (commandExitStatus.Length == 0)
             {
                 return outputFilePath.Replace("` ", " ");
@@ -259,9 +319,23 @@ namespace GTXEditor
         private void ChangeCurrentFilePathLabelText(string filePath)
         {
             currentFilePathLabel.Text = CURRENT_FILE_LABEL + filePath;
-            currentFilePath = filePath;
+            currentTextFilePath = filePath;
         }
 
+        private void ShowWarningMessage(string message)
+        {
+            MessageBox.Show(message, "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        }
+        /*
+        private void LoadGXTTable(Dictionary<string, string> dictionary)
+        {
+            foreach (var kvp in dictionary)
+            {
+                //Console.WriteLine($"key -> {kvp.Key} value -> {kvp.Value}");
+                GXTTable.Rows.Add(kvp.Key, kvp.Value);
+            }
+        }
+        */
         private void openGXTFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
             string selectedFilePath = SelectGXTFile();
@@ -275,15 +349,44 @@ namespace GTXEditor
                     string decompiledFilePath = DecompileSelectedGXTFile(newFilePath);
                     if (!string.IsNullOrEmpty(decompiledFilePath))
                     {
+                        baseDictionary = Utility.TestReadTables(decompiledFilePath);
+                        if(baseDictionary.Keys.Count > 0)
+                        {
+                            ClearGXTTableComboBoxElements();
+                            setTableComboBoxItems();
+                            ClearTable();
+                            LoadDataToDataGridView(baseDictionary[comboBoxGXTTables.SelectedItem.ToString()]);
+                            EnableComponentsAfterTableLoaded();
+                        }
+                        /*
                         Log($"Decompiled file path: {decompiledFilePath}");
                         Log($"Reading decompiled file {decompiledFilePath} ...");
-                        ReadSelectedGXTFile(decompiledFilePath);
+                        ClearTable();                       
+                        LoadDataToDataGridView(Utility.CreateDictionaryFromTextFile(decompiledFilePath));
+                        //ReadSelectedGXTFile(decompiledFilePath)
                         MessageBox.Show($"File '{selectedFilePath}' decompiled and read successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         ChangeCurrentFilePathLabelText(decompiledFilePath);
                         EnableComponentsAfterTableLoaded();
+                        */
                     }
                 }
             }
+        }
+
+        private void ClearGXTTableComboBoxElements()
+        {
+            comboBoxGXTTables.Items.Clear();
+        }
+
+        private void setTableComboBoxItems()
+        {
+            foreach(string tableNames in baseDictionary.Keys)
+            {
+                comboBoxGXTTables.Items.Add(tableNames);
+            }
+
+            if (comboBoxGXTTables.Items.Count > 0)
+                comboBoxGXTTables.SelectedIndex = 0;
         }
 
         private void textFonts_SelectedIndexChanged(object sender, EventArgs e)
@@ -306,6 +409,16 @@ namespace GTXEditor
             }
         }
 
+        private void LoadDefaultTextForPreviewText()
+        {
+            GXTValueTextBox.Text = PREVIEW_TEXT;
+        }
+
+        private void ChangePreviewText(string text)
+        {
+            GXTValueTextBox.Text = text;
+        }
+
         private void saveCurrentGXTFileAstxtToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (GXTTable.Rows.Count >= 2)
@@ -314,7 +427,7 @@ namespace GTXEditor
             }
             else
             {
-                MessageBox.Show("Please open a GXT file first.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                ShowWarningMessage(OPEN_GXT_FILE_WARNING_MESSAGE);
             }
 
         }
@@ -365,6 +478,56 @@ namespace GTXEditor
         private void compileTableButton_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void refreshTableButton_Click(object sender, EventArgs e)
+        {
+            DisableComponentsBeforeTableLoaded();
+            Log("Refresing the table...");
+            LoadDefaultTextForPreviewText();
+            ClearTable();
+            ReadSelectedGXTFile(currentTextFilePath);
+            EnableComponentsAfterTableLoaded();
+            Log("The table refreshed.");
+        }     
+
+        private void currentFilePathLabel_Click(object sender, EventArgs e)
+        {
+            string path = currentFilePathLabel.Text.Replace(CURRENT_FILE_LABEL, "");
+            if (!string.IsNullOrEmpty(path))
+            {
+                Clipboard.SetText(path);
+                MessageBox.Show($"'{path}' path copied to clipboard.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else
+            {
+                ShowWarningMessage(OPEN_GXT_FILE_WARNING_MESSAGE);
+            }
+        }
+
+        private void buttonOpenWith_Click(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrEmpty(currentTextFilePath))
+            {
+                string message = Utility.RunOpenWithWindow(currentTextFilePath);
+                if(message.Length > 0)
+                {
+                    MessageBox.Show(message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            else
+            {
+                ShowWarningMessage(OPEN_GXT_FILE_WARNING_MESSAGE);
+            }
+            
+        }
+
+        private void comboBoxGXTTables_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            DisableComponentsBeforeTableLoaded();
+            ClearTable();            
+            LoadDataToDataGridView(baseDictionary[comboBoxGXTTables.SelectedItem.ToString()]);
+            EnableComponentsAfterTableLoaded();
         }
     }
 

@@ -30,12 +30,25 @@ namespace GTXEditor
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel3 = new System.Windows.Forms.Panel();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.radioIV = new System.Windows.Forms.RadioButton();
+            this.radioSA = new System.Windows.Forms.RadioButton();
+            this.radioClassics = new System.Windows.Forms.RadioButton();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.buttonOpenWith = new System.Windows.Forms.Button();
+            this.label3 = new System.Windows.Forms.Label();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.compileTableButton = new System.Windows.Forms.Button();
+            this.label2 = new System.Windows.Forms.Label();
+            this.groupReloadTable = new System.Windows.Forms.GroupBox();
+            this.refreshTableButton = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
             this.searchGroup = new System.Windows.Forms.GroupBox();
             this.radioSearchValue = new System.Windows.Forms.RadioButton();
             this.radioSearchKey = new System.Windows.Forms.RadioButton();
@@ -44,6 +57,7 @@ namespace GTXEditor
             this.groupTextFont = new System.Windows.Forms.GroupBox();
             this.textFonts = new System.Windows.Forms.ComboBox();
             this.leftPanel = new System.Windows.Forms.Panel();
+            this.currentFilePathLabel = new System.Windows.Forms.Label();
             this.groupGxtTable = new System.Windows.Forms.GroupBox();
             this.GXTTable = new System.Windows.Forms.DataGridView();
             this.GXT_KEY = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -61,16 +75,15 @@ namespace GTXEditor
             this.saveCurrentGXTFileAstxtToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.githubRepoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.currentFilePathLabel = new System.Windows.Forms.Label();
-            this.groupReloadTable = new System.Windows.Forms.GroupBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.refreshTableButton = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.compileTableButton = new System.Windows.Forms.Button();
-            this.label2 = new System.Windows.Forms.Label();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.comboBoxGXTTables = new System.Windows.Forms.ComboBox();
             this.panel1.SuspendLayout();
             this.panel3.SuspendLayout();
+            this.groupBox3.SuspendLayout();
+            this.groupBox2.SuspendLayout();
+            this.groupBox1.SuspendLayout();
+            this.groupReloadTable.SuspendLayout();
             this.searchGroup.SuspendLayout();
             this.groupTextFont.SuspendLayout();
             this.leftPanel.SuspendLayout();
@@ -78,8 +91,7 @@ namespace GTXEditor
             ((System.ComponentModel.ISupportInitialize)(this.GXTTable)).BeginInit();
             this.groupTextPreview.SuspendLayout();
             this.menuStrip1.SuspendLayout();
-            this.groupReloadTable.SuspendLayout();
-            this.groupBox1.SuspendLayout();
+            this.groupBox4.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel1
@@ -97,6 +109,9 @@ namespace GTXEditor
             // panel3
             // 
             this.panel3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
+            this.panel3.Controls.Add(this.groupBox4);
+            this.panel3.Controls.Add(this.groupBox3);
+            this.panel3.Controls.Add(this.groupBox2);
             this.panel3.Controls.Add(this.groupBox1);
             this.panel3.Controls.Add(this.groupReloadTable);
             this.panel3.Controls.Add(this.searchGroup);
@@ -108,13 +123,148 @@ namespace GTXEditor
             this.panel3.Size = new System.Drawing.Size(188, 808);
             this.panel3.TabIndex = 9;
             // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.radioIV);
+            this.groupBox3.Controls.Add(this.radioSA);
+            this.groupBox3.Controls.Add(this.radioClassics);
+            this.groupBox3.Location = new System.Drawing.Point(4, 0);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(180, 91);
+            this.groupBox3.TabIndex = 16;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Game";
+            this.toolTip1.SetToolTip(this.groupBox3, resources.GetString("groupBox3.ToolTip"));
+            // 
+            // radioIV
+            // 
+            this.radioIV.AutoSize = true;
+            this.radioIV.Location = new System.Drawing.Point(10, 65);
+            this.radioIV.Name = "radioIV";
+            this.radioIV.Size = new System.Drawing.Size(35, 17);
+            this.radioIV.TabIndex = 2;
+            this.radioIV.Text = "IV";
+            this.radioIV.UseVisualStyleBackColor = true;
+            // 
+            // radioSA
+            // 
+            this.radioSA.AutoSize = true;
+            this.radioSA.Location = new System.Drawing.Point(10, 42);
+            this.radioSA.Name = "radioSA";
+            this.radioSA.Size = new System.Drawing.Size(86, 17);
+            this.radioSA.TabIndex = 1;
+            this.radioSA.Text = "San Andreas";
+            this.radioSA.UseVisualStyleBackColor = true;
+            // 
+            // radioClassics
+            // 
+            this.radioClassics.AutoSize = true;
+            this.radioClassics.Checked = true;
+            this.radioClassics.Location = new System.Drawing.Point(10, 19);
+            this.radioClassics.Name = "radioClassics";
+            this.radioClassics.Size = new System.Drawing.Size(134, 17);
+            this.radioClassics.TabIndex = 0;
+            this.radioClassics.TabStop = true;
+            this.radioClassics.Text = "III, Vice City, LCS, VCS";
+            this.radioClassics.UseVisualStyleBackColor = true;
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.buttonOpenWith);
+            this.groupBox2.Controls.Add(this.label3);
+            this.groupBox2.Location = new System.Drawing.Point(4, 589);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(181, 146);
+            this.groupBox2.TabIndex = 15;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Open Current Text File With";
+            // 
+            // buttonOpenWith
+            // 
+            this.buttonOpenWith.Location = new System.Drawing.Point(74, 115);
+            this.buttonOpenWith.Name = "buttonOpenWith";
+            this.buttonOpenWith.Size = new System.Drawing.Size(95, 23);
+            this.buttonOpenWith.TabIndex = 1;
+            this.buttonOpenWith.Text = "Open With";
+            this.buttonOpenWith.UseVisualStyleBackColor = true;
+            this.buttonOpenWith.Click += new System.EventHandler(this.buttonOpenWith_Click);
+            // 
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(7, 25);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(163, 101);
+            this.label3.TabIndex = 0;
+            this.label3.Text = "Open the current text file using the text editor of your choice to edit the text " +
+    "file easily. After making your changes, simply refresh the table to see the upda" +
+    "ted text.";
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.compileTableButton);
+            this.groupBox1.Controls.Add(this.label2);
+            this.groupBox1.Location = new System.Drawing.Point(3, 423);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(181, 160);
+            this.groupBox1.TabIndex = 14;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Save Table As GXT File";
+            // 
+            // compileTableButton
+            // 
+            this.compileTableButton.Location = new System.Drawing.Point(59, 129);
+            this.compileTableButton.Name = "compileTableButton";
+            this.compileTableButton.Size = new System.Drawing.Size(111, 23);
+            this.compileTableButton.TabIndex = 1;
+            this.compileTableButton.Text = "Compile The Table";
+            this.compileTableButton.UseVisualStyleBackColor = true;
+            this.compileTableButton.Click += new System.EventHandler(this.compileTableButton_Click);
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(7, 25);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(163, 101);
+            this.label2.TabIndex = 0;
+            this.label2.Text = resources.GetString("label2.Text");
+            // 
+            // groupReloadTable
+            // 
+            this.groupReloadTable.Controls.Add(this.refreshTableButton);
+            this.groupReloadTable.Controls.Add(this.label1);
+            this.groupReloadTable.Location = new System.Drawing.Point(4, 287);
+            this.groupReloadTable.Name = "groupReloadTable";
+            this.groupReloadTable.Size = new System.Drawing.Size(181, 130);
+            this.groupReloadTable.TabIndex = 13;
+            this.groupReloadTable.TabStop = false;
+            this.groupReloadTable.Text = "Reload Table";
+            // 
+            // refreshTableButton
+            // 
+            this.refreshTableButton.Location = new System.Drawing.Point(58, 101);
+            this.refreshTableButton.Name = "refreshTableButton";
+            this.refreshTableButton.Size = new System.Drawing.Size(111, 23);
+            this.refreshTableButton.TabIndex = 1;
+            this.refreshTableButton.Text = "Refresh The Table";
+            this.refreshTableButton.UseVisualStyleBackColor = true;
+            this.refreshTableButton.Click += new System.EventHandler(this.refreshTableButton_Click);
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(7, 25);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(162, 65);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "If you\'ve edited the text within the present file using a text editor, simply ref" +
+    "resh the table to view and apply your modifications.";
+            // 
             // searchGroup
             // 
             this.searchGroup.Controls.Add(this.radioSearchValue);
             this.searchGroup.Controls.Add(this.radioSearchKey);
             this.searchGroup.Controls.Add(this.searchButton);
             this.searchGroup.Controls.Add(this.searchKeyInput);
-            this.searchGroup.Location = new System.Drawing.Point(3, 3);
+            this.searchGroup.Location = new System.Drawing.Point(3, 163);
             this.searchGroup.Name = "searchGroup";
             this.searchGroup.Size = new System.Drawing.Size(181, 118);
             this.searchGroup.TabIndex = 12;
@@ -172,9 +322,9 @@ namespace GTXEditor
             this.groupTextFont.Controls.Add(this.textFonts);
             this.groupTextFont.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.groupTextFont.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-            this.groupTextFont.Location = new System.Drawing.Point(3, 701);
+            this.groupTextFont.Location = new System.Drawing.Point(4, 745);
             this.groupTextFont.Name = "groupTextFont";
-            this.groupTextFont.Size = new System.Drawing.Size(181, 88);
+            this.groupTextFont.Size = new System.Drawing.Size(180, 51);
             this.groupTextFont.TabIndex = 11;
             this.groupTextFont.TabStop = false;
             this.groupTextFont.Text = "Text Font";
@@ -189,7 +339,7 @@ namespace GTXEditor
             "GTA VC Regular",
             "Old English",
             "Rage Italic"});
-            this.textFonts.Location = new System.Drawing.Point(6, 37);
+            this.textFonts.Location = new System.Drawing.Point(6, 19);
             this.textFonts.Name = "textFonts";
             this.textFonts.Size = new System.Drawing.Size(164, 21);
             this.textFonts.TabIndex = 5;
@@ -208,6 +358,17 @@ namespace GTXEditor
             this.leftPanel.Name = "leftPanel";
             this.leftPanel.Size = new System.Drawing.Size(1282, 808);
             this.leftPanel.TabIndex = 8;
+            // 
+            // currentFilePathLabel
+            // 
+            this.currentFilePathLabel.AutoSize = true;
+            this.currentFilePathLabel.Location = new System.Drawing.Point(18, 789);
+            this.currentFilePathLabel.Name = "currentFilePathLabel";
+            this.currentFilePathLabel.Size = new System.Drawing.Size(115, 13);
+            this.currentFilePathLabel.TabIndex = 14;
+            this.currentFilePathLabel.Text = "Current Text File Path: ";
+            this.toolTip1.SetToolTip(this.currentFilePathLabel, "Double click the path to copy.");
+            this.currentFilePathLabel.Click += new System.EventHandler(this.currentFilePathLabel_Click);
             // 
             // groupGxtTable
             // 
@@ -243,7 +404,7 @@ namespace GTXEditor
             this.GXTTable.Location = new System.Drawing.Point(6, 19);
             this.GXTTable.Name = "GXTTable";
             this.GXTTable.RowHeadersVisible = false;
-            this.GXTTable.Size = new System.Drawing.Size(1249, 510);
+            this.GXTTable.Size = new System.Drawing.Size(1249, 519);
             this.GXTTable.TabIndex = 10;
             this.GXTTable.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.GXTTable_CellClick);
             // 
@@ -386,72 +547,24 @@ namespace GTXEditor
             this.githubRepoToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
             this.githubRepoToolStripMenuItem.Text = "Github Repo";
             // 
-            // currentFilePathLabel
+            // groupBox4
             // 
-            this.currentFilePathLabel.AutoSize = true;
-            this.currentFilePathLabel.Location = new System.Drawing.Point(18, 789);
-            this.currentFilePathLabel.Name = "currentFilePathLabel";
-            this.currentFilePathLabel.Size = new System.Drawing.Size(88, 13);
-            this.currentFilePathLabel.TabIndex = 14;
-            this.currentFilePathLabel.Text = "Current File Path:";
+            this.groupBox4.Controls.Add(this.comboBoxGXTTables);
+            this.groupBox4.Location = new System.Drawing.Point(4, 97);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(180, 60);
+            this.groupBox4.TabIndex = 17;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "Select GXT Table";
             // 
-            // groupReloadTable
+            // comboBoxGXTTables
             // 
-            this.groupReloadTable.Controls.Add(this.refreshTableButton);
-            this.groupReloadTable.Controls.Add(this.label1);
-            this.groupReloadTable.Location = new System.Drawing.Point(4, 127);
-            this.groupReloadTable.Name = "groupReloadTable";
-            this.groupReloadTable.Size = new System.Drawing.Size(181, 130);
-            this.groupReloadTable.TabIndex = 13;
-            this.groupReloadTable.TabStop = false;
-            this.groupReloadTable.Text = "Reload Table";
-            // 
-            // label1
-            // 
-            this.label1.Location = new System.Drawing.Point(7, 25);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(162, 65);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "If you\'ve edited the text within the present file using a text editor, simply ref" +
-    "resh the table to view and apply your modifications.";
-            // 
-            // refreshTableButton
-            // 
-            this.refreshTableButton.Location = new System.Drawing.Point(74, 101);
-            this.refreshTableButton.Name = "refreshTableButton";
-            this.refreshTableButton.Size = new System.Drawing.Size(95, 23);
-            this.refreshTableButton.TabIndex = 1;
-            this.refreshTableButton.Text = "Refresh Table";
-            this.refreshTableButton.UseVisualStyleBackColor = true;
-            // 
-            // groupBox1
-            // 
-            this.groupBox1.Controls.Add(this.compileTableButton);
-            this.groupBox1.Controls.Add(this.label2);
-            this.groupBox1.Location = new System.Drawing.Point(3, 263);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(181, 160);
-            this.groupBox1.TabIndex = 14;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Save Table As GXT File";
-            // 
-            // compileTableButton
-            // 
-            this.compileTableButton.Location = new System.Drawing.Point(75, 129);
-            this.compileTableButton.Name = "compileTableButton";
-            this.compileTableButton.Size = new System.Drawing.Size(95, 23);
-            this.compileTableButton.TabIndex = 1;
-            this.compileTableButton.Text = "Compile Table";
-            this.compileTableButton.UseVisualStyleBackColor = true;
-            this.compileTableButton.Click += new System.EventHandler(this.compileTableButton_Click);
-            // 
-            // label2
-            // 
-            this.label2.Location = new System.Drawing.Point(7, 25);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(163, 101);
-            this.label2.TabIndex = 0;
-            this.label2.Text = resources.GetString("label2.Text");
+            this.comboBoxGXTTables.FormattingEnabled = true;
+            this.comboBoxGXTTables.Location = new System.Drawing.Point(6, 19);
+            this.comboBoxGXTTables.Name = "comboBoxGXTTables";
+            this.comboBoxGXTTables.Size = new System.Drawing.Size(164, 21);
+            this.comboBoxGXTTables.TabIndex = 0;
+            this.comboBoxGXTTables.SelectedIndexChanged += new System.EventHandler(this.comboBoxGXTTables_SelectedIndexChanged);
             // 
             // MainWindow
             // 
@@ -467,6 +580,11 @@ namespace GTXEditor
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.panel3.ResumeLayout(false);
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox1.ResumeLayout(false);
+            this.groupReloadTable.ResumeLayout(false);
             this.searchGroup.ResumeLayout(false);
             this.searchGroup.PerformLayout();
             this.groupTextFont.ResumeLayout(false);
@@ -478,8 +596,7 @@ namespace GTXEditor
             this.groupTextPreview.PerformLayout();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
-            this.groupReloadTable.ResumeLayout(false);
-            this.groupBox1.ResumeLayout(false);
+            this.groupBox4.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -521,6 +638,15 @@ namespace GTXEditor
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Button compileTableButton;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.Button buttonOpenWith;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.RadioButton radioIV;
+        private System.Windows.Forms.RadioButton radioSA;
+        private System.Windows.Forms.RadioButton radioClassics;
+        private System.Windows.Forms.GroupBox groupBox4;
+        private System.Windows.Forms.ComboBox comboBoxGXTTables;
     }
 }
 
