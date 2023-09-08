@@ -74,11 +74,11 @@ namespace GTXEditor
                     string consoleOutput = process.StandardOutput.ReadToEnd();
                     Console.WriteLine(consoleOutput);
                     process.WaitForExit();
-                    Console.WriteLine("sfgsgfsfg");
+                    
                     int exitCode = process.ExitCode;
                     if (exitCode == 0)
                     {
-                        
+
                         if (consoleOutput.ToLower().Contains("bad allocation"))
                         {
                             return $"Decompiling failed: Bad Allocation. Couldn't decompile the gxt file.";
@@ -122,16 +122,16 @@ namespace GTXEditor
             }
             catch (Exception ex)
             {
-                return ex.Message;                
+                return ex.Message;
             }
         }
 
-        public static Dictionary<string, Dictionary<string, string>> TestReadTables(string filePath)
+        public static Dictionary<string, Dictionary<string, string>> ReadTables(string filePath, Dictionary<string, Dictionary<string, string>> baseDictionary)
         {
             string[] lines = File.ReadAllLines(filePath);
 
-            Dictionary<string, Dictionary<string, string>> baseDictionary = new Dictionary<string, Dictionary<string, string>>();
-            
+            //Dictionary<string, Dictionary<string, string>> baseDictionary = new Dictionary<string, Dictionary<string, string>>();
+
             string currentTable = "MAIN";
             string currentKey = null;
             baseDictionary.Add(currentTable, new Dictionary<string, string>());
@@ -152,7 +152,7 @@ namespace GTXEditor
                     if (!baseDictionary[currentTable].ContainsKey(currentKey))
                     {
                         baseDictionary[currentTable].Add(currentKey, "");
-                    }                    
+                    }
                 }
                 else if (currentKey != null && !string.IsNullOrEmpty(trimmedLine))
                 {

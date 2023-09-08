@@ -28,7 +28,7 @@ namespace GTXEditor
         private int lastFoundRowIndex = -1;
 
         private Dictionary<string, string> currentDictionary;
-        Dictionary<string, Dictionary<string, string>> baseDictionary;// = new Dictionary<string, Dictionary<string, string>>();
+        Dictionary<string, Dictionary<string, string>> baseDictionary = new Dictionary<string, Dictionary<string, string>>();// = new Dictionary<string, Dictionary<string, string>>();
 
         public enum CustomFonts
         {
@@ -102,6 +102,7 @@ namespace GTXEditor
             refreshTableButton.Enabled = true;
             compileTableButton.Enabled = true;
             GXTTable.Enabled = true;
+            GXTTable.VirtualMode = true;
             buttonOpenWith.Enabled = true;
         }
 
@@ -232,7 +233,7 @@ namespace GTXEditor
                 }
             }
 
-            MessageBox.Show("Value not found.");
+            MessageBox.Show("Value not found.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void ClearTable()
@@ -242,9 +243,9 @@ namespace GTXEditor
 
         private string DecompileSelectedGXTFile(string inputFilePath)
         {
-            inputFilePath = inputFilePath.Replace(" ", "` "); //Add backtick character before any space character in path. The powershell command doesn't work without backtick character.
+            inputFilePath = inputFilePath.Replace(" ", "` "); //Add backtick character before any space character in the path. The powershell command doesn't work without backtick character.
             string outputFilePath = "";
-            
+
             if (inputFilePath.Contains(".GXT"))
             {
                 outputFilePath = inputFilePath.Replace(".GXT", ".txt");
@@ -252,12 +253,16 @@ namespace GTXEditor
             else if (inputFilePath.Contains(".gxt"))
             {
                 outputFilePath = inputFilePath.Replace(".gxt", ".txt");
-            }            
+            }
 
             string decompileArguments = $"-i {inputFilePath} -o {outputFilePath}";
             if (radioSA.Checked)
             {
                 decompileArguments += " -k CRC32 -w0 -h1";
+            }
+            else if (radioIV.Checked)
+            {
+                decompileArguments += " -h1 -k JENKINS -m0";
             }
 
 
@@ -336,6 +341,21 @@ namespace GTXEditor
             }
         }
         */
+        private void LoadDataAndTable(string filePath)
+        {
+            baseDictionary.Clear();
+            Utility.ReadTables(filePath, baseDictionary);
+            if (baseDictionary.Keys.Count > 0)
+            {
+                ClearGXTTableComboBoxElements();
+                setTableComboBoxItems();
+                //ClearTable();
+                //LoadDataToDataGridView(baseDictionary[comboBoxGXTTables.SelectedItem.ToString()]);
+                //EnableComponentsAfterTableLoaded();
+                ChangeCurrentFilePathLabelText(filePath);
+            }
+        }
+
         private void openGXTFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
             string selectedFilePath = SelectGXTFile();
@@ -349,15 +369,11 @@ namespace GTXEditor
                     string decompiledFilePath = DecompileSelectedGXTFile(newFilePath);
                     if (!string.IsNullOrEmpty(decompiledFilePath))
                     {
-                        baseDictionary = Utility.TestReadTables(decompiledFilePath);
-                        if(baseDictionary.Keys.Count > 0)
-                        {
-                            ClearGXTTableComboBoxElements();
-                            setTableComboBoxItems();
-                            ClearTable();
-                            LoadDataToDataGridView(baseDictionary[comboBoxGXTTables.SelectedItem.ToString()]);
-                            EnableComponentsAfterTableLoaded();
-                        }
+                        Log($"Decompiled file path: {decompiledFilePath}");
+                        Log($"Reading decompiled file {decompiledFilePath} ...");
+                        ClearTable();
+                        LoadDataAndTable(decompiledFilePath);
+                        MessageBox.Show($"File '{selectedFilePath}' decompiled and read successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         /*
                         Log($"Decompiled file path: {decompiledFilePath}");
                         Log($"Reading decompiled file {decompiledFilePath} ...");
@@ -373,6 +389,15 @@ namespace GTXEditor
             }
         }
 
+        private void refreshTableButton_Click(object sender, EventArgs e)
+        {
+            DisableComponentsBeforeTableLoaded();
+            Log("Refresing the table...");
+            LoadDefaultTextForPreviewText();
+            LoadDataAndTable(currentTextFilePath);
+            Log("The table refreshed.");
+        }
+
         private void ClearGXTTableComboBoxElements()
         {
             comboBoxGXTTables.Items.Clear();
@@ -380,7 +405,7 @@ namespace GTXEditor
 
         private void setTableComboBoxItems()
         {
-            foreach(string tableNames in baseDictionary.Keys)
+            foreach (string tableNames in baseDictionary.Keys)
             {
                 comboBoxGXTTables.Items.Add(tableNames);
             }
@@ -480,16 +505,7 @@ namespace GTXEditor
 
         }
 
-        private void refreshTableButton_Click(object sender, EventArgs e)
-        {
-            DisableComponentsBeforeTableLoaded();
-            Log("Refresing the table...");
-            LoadDefaultTextForPreviewText();
-            ClearTable();
-            ReadSelectedGXTFile(currentTextFilePath);
-            EnableComponentsAfterTableLoaded();
-            Log("The table refreshed.");
-        }     
+
 
         private void currentFilePathLabel_Click(object sender, EventArgs e)
         {
@@ -510,7 +526,7 @@ namespace GTXEditor
             if (!string.IsNullOrEmpty(currentTextFilePath))
             {
                 string message = Utility.RunOpenWithWindow(currentTextFilePath);
-                if(message.Length > 0)
+                if (message.Length > 0)
                 {
                     MessageBox.Show(message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
@@ -519,13 +535,12 @@ namespace GTXEditor
             {
                 ShowWarningMessage(OPEN_GXT_FILE_WARNING_MESSAGE);
             }
-            
+
         }
 
         private void comboBoxGXTTables_SelectedIndexChanged(object sender, EventArgs e)
         {
-            DisableComponentsBeforeTableLoaded();
-            ClearTable();            
+            ClearTable();
             LoadDataToDataGridView(baseDictionary[comboBoxGXTTables.SelectedItem.ToString()]);
             EnableComponentsAfterTableLoaded();
         }

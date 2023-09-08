@@ -31,11 +31,13 @@ namespace GTXEditor
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel3 = new System.Windows.Forms.Panel();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.comboBoxGXTTables = new System.Windows.Forms.ComboBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.radioIV = new System.Windows.Forms.RadioButton();
             this.radioSA = new System.Windows.Forms.RadioButton();
@@ -76,10 +78,9 @@ namespace GTXEditor
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.githubRepoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.comboBoxGXTTables = new System.Windows.Forms.ComboBox();
             this.panel1.SuspendLayout();
             this.panel3.SuspendLayout();
+            this.groupBox4.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -91,7 +92,6 @@ namespace GTXEditor
             ((System.ComponentModel.ISupportInitialize)(this.GXTTable)).BeginInit();
             this.groupTextPreview.SuspendLayout();
             this.menuStrip1.SuspendLayout();
-            this.groupBox4.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel1
@@ -122,6 +122,25 @@ namespace GTXEditor
             this.panel3.Padding = new System.Windows.Forms.Padding(0, 5, 0, 0);
             this.panel3.Size = new System.Drawing.Size(188, 808);
             this.panel3.TabIndex = 9;
+            // 
+            // groupBox4
+            // 
+            this.groupBox4.Controls.Add(this.comboBoxGXTTables);
+            this.groupBox4.Location = new System.Drawing.Point(4, 97);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(180, 60);
+            this.groupBox4.TabIndex = 17;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "Select GXT Table";
+            // 
+            // comboBoxGXTTables
+            // 
+            this.comboBoxGXTTables.FormattingEnabled = true;
+            this.comboBoxGXTTables.Location = new System.Drawing.Point(6, 19);
+            this.comboBoxGXTTables.Name = "comboBoxGXTTables";
+            this.comboBoxGXTTables.Size = new System.Drawing.Size(164, 21);
+            this.comboBoxGXTTables.TabIndex = 0;
+            this.comboBoxGXTTables.SelectedIndexChanged += new System.EventHandler(this.comboBoxGXTTables_SelectedIndexChanged);
             // 
             // groupBox3
             // 
@@ -383,24 +402,23 @@ namespace GTXEditor
             // 
             // GXTTable
             // 
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopLeft;
-            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.GXTTable.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle4;
-            this.GXTTable.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopLeft;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.GXTTable.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
             this.GXTTable.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
             this.GXTTable.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.GXTTable.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.GXTTable.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.GXT_KEY,
             this.GXT_VALUE});
-            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.GXTTable.DefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.GXTTable.DefaultCellStyle = dataGridViewCellStyle3;
             this.GXTTable.Location = new System.Drawing.Point(6, 19);
             this.GXTTable.Name = "GXTTable";
             this.GXTTable.RowHeadersVisible = false;
@@ -411,8 +429,8 @@ namespace GTXEditor
             // GXT_KEY
             // 
             this.GXT_KEY.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.GXT_KEY.DefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.GXT_KEY.DefaultCellStyle = dataGridViewCellStyle2;
             this.GXT_KEY.HeaderText = "GXT Key";
             this.GXT_KEY.MinimumWidth = 65;
             this.GXT_KEY.Name = "GXT_KEY";
@@ -547,25 +565,6 @@ namespace GTXEditor
             this.githubRepoToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
             this.githubRepoToolStripMenuItem.Text = "Github Repo";
             // 
-            // groupBox4
-            // 
-            this.groupBox4.Controls.Add(this.comboBoxGXTTables);
-            this.groupBox4.Location = new System.Drawing.Point(4, 97);
-            this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(180, 60);
-            this.groupBox4.TabIndex = 17;
-            this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "Select GXT Table";
-            // 
-            // comboBoxGXTTables
-            // 
-            this.comboBoxGXTTables.FormattingEnabled = true;
-            this.comboBoxGXTTables.Location = new System.Drawing.Point(6, 19);
-            this.comboBoxGXTTables.Name = "comboBoxGXTTables";
-            this.comboBoxGXTTables.Size = new System.Drawing.Size(164, 21);
-            this.comboBoxGXTTables.TabIndex = 0;
-            this.comboBoxGXTTables.SelectedIndexChanged += new System.EventHandler(this.comboBoxGXTTables_SelectedIndexChanged);
-            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -580,6 +579,7 @@ namespace GTXEditor
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.panel3.ResumeLayout(false);
+            this.groupBox4.ResumeLayout(false);
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             this.groupBox2.ResumeLayout(false);
@@ -596,7 +596,6 @@ namespace GTXEditor
             this.groupTextPreview.PerformLayout();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
-            this.groupBox4.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
