@@ -66,6 +66,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -108,6 +109,12 @@
     <Content Include="Compiler\tables\vc_table_mob_jpn.txt" />
     <Content Include="Compiler\tables\vc_table_mob_kor.txt" />
     <Content Include="Compiler\tables\vc_table_mob_rus.txt" />
+    <None Include="Resources\save.png" />
+    <None Include="Resources\converter_gxt.png" />
+    <None Include="Resources\create_gxt.png" />
+    <None Include="Resources\convert.png" />
+    <None Include="Resources\file.png" />
+    <None Include="Resources\open-folder.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="TextFonts\SanAndreas\" />
