@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -11,9 +8,7 @@ using System.Drawing.Text;
 namespace GTXEditor
 {
     public static class FileUtils
-    {
-        private static readonly Logger logger = Logger.Instance;
-
+    {        
         public enum CustomFonts
         {
             BankGothic = 0,
@@ -25,9 +20,7 @@ namespace GTXEditor
 
         public static void ReadMissionTablesFromTextFile(string filePath, Dictionary<string, Dictionary<string, string>> baseDictionary)
         {
-            string[] lines = File.ReadAllLines(filePath);
-
-            //Dictionary<string, Dictionary<string, string>> baseDictionary = new Dictionary<string, Dictionary<string, string>>();
+            string[] lines = File.ReadAllLines(filePath);           
 
             string currentTable = "MAIN";
             string currentKey = null;
@@ -133,15 +126,15 @@ namespace GTXEditor
             switch (fontEnum)
             {
                 case CustomFonts.BankGothic:
-                    return "Bank Gothic.ttf";
+                    return Constants.FONT_FILE_NAME_BANK;
                 case CustomFonts.Beckett:
-                    return "Beckett.ttf";
+                    return Constants.FONT_FILE_NAME_BECKETT;
                 case CustomFonts.OldEnglish:
-                    return "Old English.ttf";
+                    return Constants.FONT_FILE_NAME_OLD;
                 case CustomFonts.GTAVCRegular:
-                    return "GTAVC Regular.ttf";
+                    return Constants.FONT_FILE_NAME_VC;
                 case CustomFonts.RageItalic:
-                    return "Rage Italic.ttf";
+                    return Constants.FONT_FILE_NAME_RAGE;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(fontEnum), fontEnum, "Unknown font enum");
             }

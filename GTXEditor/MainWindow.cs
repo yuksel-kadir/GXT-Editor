@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Text;
 using System.IO;
-using System.Text;
 using System.Windows.Forms;
-using System.Linq;
 
 
 namespace GTXEditor
@@ -198,19 +194,11 @@ namespace GTXEditor
                     if (!string.IsNullOrEmpty(decompiledFilePath))
                     {
                         logger.PrintLogMessage(logBox, LogMessageTexts.DECOMPILED_FILE_PATH, decompiledFilePath);
-                        logger.PrintLogMessage(logBox, LogMessageTexts.READING_DECOMPILED_FILE_PATH, decompiledFilePath);
-                        //ClearTable();
+                        logger.PrintLogMessage(logBox, LogMessageTexts.READING_DECOMPILED_FILE_PATH, decompiledFilePath);                        
                         gxtTableManager.ClearTable();
                         LoadDataAndTable(decompiledFilePath);
                         MessageBox.Show($"File '{selectedFilePath}' decompiled and read successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        /*
-                        Log($"Decompiled file path: {decompiledFilePath}");
-                        Log($"Reading decompiled file {decompiledFilePath} ...");
-                        ClearTable();                       
-                        LoadDataToDataGridView(Utility.CreateDictionaryFromTextFile(decompiledFilePath));
-                        //ReadSelectedGXTFile(decompiledFilePath)
-                        MessageBox.Show($"File '{selectedFilePath}' decompiled and read successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        ChangeCurrentFilePathLabelText(decompiledFilePath);
+                        /*                                                                                                                    
                         EnableComponentsAfterTableLoaded();
                         */
                     }

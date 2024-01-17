@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
 
 namespace GTXEditor
 {
@@ -26,6 +22,12 @@ namespace GTXEditor
 
         public const string TEXT_FILE_FILTER = "Text Files|*.txt";
         public const string GXT_FILE_FILTER = "GXT Files|*.gxt";
+
+        public const string FONT_FILE_NAME_BANK = "Bank Gothic.ttf";
+        public const string FONT_FILE_NAME_BECKETT = "Beckett.ttf";
+        public const string FONT_FILE_NAME_OLD = "Old English.ttf";
+        public const string FONT_FILE_NAME_VC = "GTAVC Regular.ttf";
+        public const string FONT_FILE_NAME_RAGE = "Rage Italic.ttf";
 
         public const int GXT_KEY_COLUMN = 0;
         public const int GXT_VALUE_COLUMN = 1;       
