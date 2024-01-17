@@ -46,6 +46,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Constants.cs" />
+    <Compile Include="DialogBoxMessageTexts.cs" />
+    <Compile Include="FileUtils.cs" />
+    <Compile Include="GXTTableManager.cs" />
+    <Compile Include="Logger.cs" />
+    <Compile Include="LogMessageTexts.cs" />
     <Compile Include="MainWindow.cs">
       <SubType>Form</SubType>
     </Compile>

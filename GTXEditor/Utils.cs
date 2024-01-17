@@ -8,7 +8,7 @@ namespace GTXEditor
 {
     public static class Utility
     {
-        private static readonly ProcessStartInfo startInfo = new ProcessStartInfo
+        private static readonly ProcessStartInfo decompilerStartInfo = new ProcessStartInfo
         {
             FileName = "powershell.exe",
             RedirectStandardOutput = true,
@@ -62,26 +62,19 @@ namespace GTXEditor
         public static string DecompileGXTFile(string exePath, string arguments)
         {
 
-            using (Process process = new Process { StartInfo = startInfo })
+            using (Process process = new Process { StartInfo = decompilerStartInfo })
             {
                 try
                 {
-                    string command = $"{exePath} {arguments}";
-                    process.Start();
-                    process.StandardInput.WriteLine(command);
-                    process.StandardInput.Flush();
-                    process.StandardInput.Close();
-                    string consoleOutput = process.StandardOutput.ReadToEnd();
-                    Console.WriteLine(consoleOutput);
-                    process.WaitForExit();
-                    
-                    int exitCode = process.ExitCode;
+                    string consoleOutput;
+                    int exitCode;
+                    DecompileFile(exePath, arguments, process, out consoleOutput, out exitCode);
                     if (exitCode == 0)
                     {
 
                         if (consoleOutput.ToLower().Contains("bad allocation"))
                         {
-                            return $"Decompiling failed: Bad Allocation. Couldn't decompile the gxt file.";
+                            return DialogBoxMessageTexts.BAD_ALLOCATION;
                         }
                         Console.WriteLine("Command ran successfully.");
                         return "";
@@ -89,18 +82,33 @@ namespace GTXEditor
                     else
                     {
                         Console.WriteLine($"Command failed with exit code: {exitCode}");
-                        return $"Decompiling failed with exit code: {exitCode}";
+                        return DialogBoxMessageTexts.GetFormattedText(DialogBoxMessageTexts.DECOMPILING_FAILED_WITH, exitCode);
                     }
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine($"An error occurred: {ex.Message}");
-                    return $"Something went wrong: {ex.Message}";
+                    return DialogBoxMessageTexts.GetFormattedText(DialogBoxMessageTexts.SOMETHING_WENT_WRONG, ex.Message);
                 }
 
             }
         }
 
+        private static void DecompileFile(string exePath, string arguments, Process process, out string consoleOutput, out int exitCode)
+        {
+            string command = $"{exePath} {arguments}";
+            process.Start();
+            process.StandardInput.WriteLine(command);
+            process.StandardInput.Flush();
+            process.StandardInput.Close();
+            consoleOutput = process.StandardOutput.ReadToEnd();
+            Console.WriteLine(consoleOutput);
+            process.WaitForExit();
+
+            exitCode = process.ExitCode;
+        }
+
+        //This method is used to open "Open With" dialog to select a text editor to open a text file.
         public static string RunOpenWithWindow(string arguments)
         {
             try

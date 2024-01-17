@@ -13,79 +13,33 @@ namespace GTXEditor
 {
     public partial class MainWindow : Form
     {
-        private const string EXE_PATH = @"\Compiler\gxt.exe";
-        private const string CURRENT_FILE_LABEL = "Current Text File Path: ";
-        private const string PREVIEW_TEXT = "Preview Text";
-        private const string OPEN_GXT_FILE_WARNING_MESSAGE = "Please open a GXT file first.";
-        private const string MISSION_TABLE_LINE = "{=================================== MISSION TABLE AMBULAE ===================================}";
-
-        private string lastSearchKeyword = "";
+        private readonly Logger logger = Logger.Instance;        
         private string currentTextFilePath = "";
-        private readonly string[] fontNames = { "Bank Gothic", "Beckett", "GTA VC Regular", "Old English", "Rage Italic" };
 
-        private StringBuilder logBuilder = new StringBuilder();
-        private static PrivateFontCollection privateFonts = new PrivateFontCollection();
-        private int lastFoundRowIndex = -1;
+        private static PrivateFontCollection privateFonts = new PrivateFontCollection();                
 
-        private Dictionary<string, string> currentDictionary;
-        Dictionary<string, Dictionary<string, string>> baseDictionary = new Dictionary<string, Dictionary<string, string>>();// = new Dictionary<string, Dictionary<string, string>>();
-
-        public enum CustomFonts
-        {
-            BankGothic = 0,
-            Beckett = 1,
-            GTAVCRegular = 2,
-            OldEnglish = 3,
-            RageItalic = 4
-        }
+        private GXTTableManager gxtTableManager;
 
         public MainWindow()
         {
             InitializeComponent();
-            LoadCustomFont();
+            gxtTableManager = new GXTTableManager(GXTTable);
+            gxtTableManager.InitializeTable(GXTTable);
+
+            FileUtils.LoadCustomFontFiles(privateFonts);
             InitializePreviewText();
             DisableComponentsBeforeTableLoaded();
-            InitializeDataGridView();
+            //InitializeDataGridView();
+
         }
 
         private void InitializePreviewText()
         {
             textFonts.SelectedIndex = 0;
-            GXTValueTextBox.Text = "Placeholder Text";
+            GXTValueTextBox.Text = Constants.PLACEHOLDER_TEXT;
             Font customFont = new Font(privateFonts.Families[textFonts.SelectedIndex], 20, FontStyle.Regular);
             GXTValueTextBox.Font = customFont;
-        }
-
-        private void InitializeDataGridView()
-        {
-            GXTTable.VirtualMode = true;
-            GXTTable.CellValueNeeded += GXTTable_CellValueNeeded;
-        }
-
-        private void LoadDataToDataGridView(Dictionary<string, string> dictionary)
-        {
-            currentDictionary = dictionary;
-            GXTTable.RowCount = currentDictionary.Count;
-        }
-
-        private void GXTTable_CellValueNeeded(object sender, DataGridViewCellValueEventArgs e)
-        {
-            if (e.RowIndex >= currentDictionary.Count || e.RowIndex < 0)
-                return;
-
-            KeyValuePair<string, string> rowData = currentDictionary.ElementAt(e.RowIndex);
-
-            if (e.ColumnIndex == 0)
-            {
-                e.Value = rowData.Key;
-            }
-            else if (e.ColumnIndex == 1)
-            {
-                e.Value = rowData.Value;
-            }
-        }
-
-
+        }      
 
         private void DisableComponentsBeforeTableLoaded()
         {
@@ -106,176 +60,71 @@ namespace GTXEditor
             buttonOpenWith.Enabled = true;
         }
 
-        private void LoadCustomFont()
-        {
-            foreach (CustomFonts fontEnum in Enum.GetValues(typeof(CustomFonts)))
-            {
-                string fontFileName = GetFontFileName(fontEnum);
-                string fontFilePath = Path.Combine(Application.StartupPath, "TextFonts", fontFileName);
-                privateFonts.AddFontFile(fontFilePath);
-            }
-        }
-
-        private string GetFontFileName(CustomFonts fontEnum)
-        {
-            switch (fontEnum)
-            {
-                case CustomFonts.BankGothic:
-                    return "Bank Gothic.ttf";
-                case CustomFonts.Beckett:
-                    return "Beckett.ttf";
-                case CustomFonts.OldEnglish:
-                    return "Old English.ttf";
-                case CustomFonts.GTAVCRegular:
-                    return "GTAVC Regular.ttf";
-                case CustomFonts.RageItalic:
-                    return "Rage Italic.ttf";
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(fontEnum), fontEnum, "Unknown font enum");
-            }
-        }
-
-        private void Log(string message)
-        {
-            logBuilder.AppendLine($"{DateTime.Now}: {message}");
-            logBox.Text = logBuilder.ToString();
-            logBox.SelectionStart = logBox.Text.Length;
-            logBox.ScrollToCaret();
-        }
-
         private void SaveCurrentTableIntoTextFile()
-        {
-            SaveFileDialog saveFileDialog = new SaveFileDialog();
-            saveFileDialog.Filter = "Text Files|*.txt";
-
-            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+        {            
+            string result = FileUtils.SaveMissionTablesToTextFile(GXTTable);
+            if (result != null)
             {
-                Log($"Saving table to {saveFileDialog.FileName} ...");
-                using (StreamWriter writer = new StreamWriter(saveFileDialog.FileName))
-                {
-                    foreach (DataGridViewRow row in GXTTable.Rows)
-                    {
-                        if (row.Cells.Count >= 2)
-                        {
-                            string key = row.Cells[0].Value?.ToString();
-                            string value = row.Cells[1].Value?.ToString();
-
-                            if (!string.IsNullOrEmpty(key) && !string.IsNullOrEmpty(value))
-                            {
-                                writer.WriteLine($"[{key}]");
-                                writer.WriteLine(value);
-                                writer.WriteLine();
-                            }
-                        }
-                    }
+                if (FileUtils.IsFilePathValid(result))//If the mission tables are saved to a text file then result is going to be a valid text file path.
+                {                                   
+                    logger.PrintLogMessage(logBox, DialogBoxMessageTexts.GXT_TABLE_SAVED_TO, result);
+                    string formattedText = DialogBoxMessageTexts.GetFormattedText(DialogBoxMessageTexts.GXT_TABLE_SAVED_TO, result);
+                    MessageBox.Show(formattedText, "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
-                Log($"GXT table is saved to {saveFileDialog.FileName}.");
-                MessageBox.Show($"GXT table is saved to: {saveFileDialog.FileName}", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                else
+                {
+                    logger.PrintLogMessage(logBox, DialogBoxMessageTexts.ERROR_OCCURRED_FILE_SAVE, result);
+                    string formattedText = DialogBoxMessageTexts.GetFormattedText(DialogBoxMessageTexts.ERROR_OCCURRED_FILE_SAVE, result);
+                    MessageBox.Show(formattedText, "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
             }
         }
-
-        private Dictionary<string, string> ReadSelectedGXTFile(string filePath)
-        {
-            Dictionary<string, string> dictionary = Utility.CreateDictionaryFromTextFile(filePath);
-            foreach (var kvp in dictionary)
-            {
-                //Console.WriteLine($"key -> {kvp.Key} value -> {kvp.Value}");
-                GXTTable.Rows.Add(kvp.Key, kvp.Value);
-            }
-            Log($"Reading completed.");
-            return dictionary;
-        }
-
+        
         private void SearchKeyAndSelectRow(string keyword)
         {
-            if (keyword != lastSearchKeyword)
+            int foundRowIndex = gxtTableManager.FindGxtKey(keyword);
+            if(foundRowIndex == -1)
             {
-                lastSearchKeyword = keyword;
-                lastFoundRowIndex = -1; // Reset the last found index
-            }
-
-            int startRowIndex = lastFoundRowIndex + 1; // Start searching from the next row
-
-            for (int rowIndex = startRowIndex; rowIndex < GXTTable.Rows.Count; rowIndex++)
-            {
-                if (GXTTable.Rows[rowIndex].Cells[0].Value != null &&
-                    GXTTable.Rows[rowIndex].Cells[0].Value.ToString().ToLower().Contains(keyword.ToLower()))
-                {
-                    GXTTable.CurrentCell = GXTTable.Rows[rowIndex].Cells[0]; // Select the cell
-                    GXTTable.FirstDisplayedScrollingRowIndex = rowIndex; // Scroll to the row
-                    lastFoundRowIndex = rowIndex; // Update the last found index
-                    return; // Found and selected the row
-                }
-            }
-            MessageBox.Show("Keyword not found.");
+                MessageBox.Show(DialogBoxMessageTexts.KEY_NOT_FOUND, DialogBoxMessageTexts.TITLE_GXT_KEY_NOT_FOUND, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }            
         }
 
         private void SearchValueAndSelectRow(string keyword)
-        {
-            if (keyword != lastSearchKeyword)
+        {            
+            int foundIndex = gxtTableManager.FindGxtValue(keyword);
+            if(foundIndex == -1)
             {
-                lastSearchKeyword = keyword;
-                lastFoundRowIndex = -1; // Reset the last found index
+                MessageBox.Show(DialogBoxMessageTexts.VALUE_NOT_FOUND, DialogBoxMessageTexts.TITLE_GXT_VALUE_NOT_FOUND, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
             }
-
-            int startRowIndex = lastFoundRowIndex + 1; // Start searching from the next row
-
-            for (int rowIndex = startRowIndex; rowIndex < GXTTable.Rows.Count; rowIndex++)
-            {
-                if (GXTTable.Rows[rowIndex].Cells[1].Value != null &&
-                    GXTTable.Rows[rowIndex].Cells[1].Value.ToString().ToLower().Contains(keyword.ToLower()))
-                {
-                    GXTTable.CurrentCell = GXTTable.Rows[rowIndex].Cells[1]; // Select the cell
-                    GXTTable.FirstDisplayedScrollingRowIndex = rowIndex; // Scroll to the row
-                    lastFoundRowIndex = rowIndex; // Update the last found index                   
-                    ChangePreviewText(GXTTable.Rows[rowIndex].Cells[1].Value.ToString());
-                    return; // Found and selected the row
-                }
-            }
-
-            MessageBox.Show("Value not found.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            ChangePreviewText(GXTTable.Rows[foundIndex].Cells[Constants.GXT_VALUE_COLUMN].Value.ToString());
         }
-
-        private void ClearTable()
-        {
-            GXTTable.Rows.Clear();
-        }
-
+        
         private string DecompileSelectedGXTFile(string inputFilePath)
         {
-            inputFilePath = inputFilePath.Replace(" ", "` "); //Add backtick character before any space character in the path. The powershell command doesn't work without backtick character.
+            string decompileArguments = "";
             string outputFilePath = "";
 
-            if (inputFilePath.Contains(".GXT"))
-            {
-                outputFilePath = inputFilePath.Replace(".GXT", ".txt");
-            }
-            else if (inputFilePath.Contains(".gxt"))
-            {
-                outputFilePath = inputFilePath.Replace(".gxt", ".txt");
-            }
-
-            string decompileArguments = $"-i {inputFilePath} -o {outputFilePath}";
             if (radioSA.Checked)
             {
-                decompileArguments += " -k CRC32 -w0 -h1";
+                decompileArguments += Constants.GTA_SA_DECOMPILE_ARGUMENTS;
             }
             else if (radioIV.Checked)
             {
-                decompileArguments += " -h1 -k JENKINS -m0";
+                decompileArguments += Constants.GTA_IV_DECOMPILE_ARGUMENTS;
             }
 
+            string commandExitStatus = FileUtils.DecompileGXTFile(inputFilePath, decompileArguments, out outputFilePath);
 
-            string workingDirectory = Directory.GetCurrentDirectory();
-            string absoluteExePath = workingDirectory + EXE_PATH;
-            string commandExitStatus = Utility.DecompileGXTFile(absoluteExePath.Replace(" ", "` "), decompileArguments);
             if (commandExitStatus.Length == 0)
             {
                 return outputFilePath.Replace("` ", " ");
             }
             else
             {
-                MessageBox.Show($"An error occurred: {commandExitStatus}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                string formattedText = DialogBoxMessageTexts.GetFormattedText(DialogBoxMessageTexts.ERROR_OCCURRED, commandExitStatus);
+                MessageBox.Show(formattedText, DialogBoxMessageTexts.TITLE_ERROR_OCCURED, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return "";
             }
         }
@@ -284,21 +133,7 @@ namespace GTXEditor
         {
 
         }
-
-        private string SelectGXTFile()
-        {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "GXT Files|*.gxt"; // Filter to only .gxt files
-            openFileDialog.Title = "Select a GXT File";
-
-            if (openFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                string selectedFilePath = openFileDialog.FileName;
-                return selectedFilePath;
-            }
-            return null;
-        }
-
+        
         private string CopySelectedGXTFileToGXTsFolder(string selectedFilePath)
         {
             // Create a subdirectory named 'gxts' in the current working directory
@@ -315,7 +150,8 @@ namespace GTXEditor
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                string formattedText = DialogBoxMessageTexts.GetFormattedText(DialogBoxMessageTexts.ERROR_OCCURRED, ex.Message);
+                MessageBox.Show(formattedText, DialogBoxMessageTexts.TITLE_ERROR, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return null;
             }
 
@@ -323,29 +159,21 @@ namespace GTXEditor
 
         private void ChangeCurrentFilePathLabelText(string filePath)
         {
-            currentFilePathLabel.Text = CURRENT_FILE_LABEL + filePath;
+            currentFilePathLabel.Text = Constants.CURRENT_FILE_LABEL + filePath;
             currentTextFilePath = filePath;
         }
 
         private void ShowWarningMessage(string message)
         {
-            MessageBox.Show(message, "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            MessageBox.Show(message, DialogBoxMessageTexts.TITLE_WARNING, MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
-        /*
-        private void LoadGXTTable(Dictionary<string, string> dictionary)
-        {
-            foreach (var kvp in dictionary)
-            {
-                //Console.WriteLine($"key -> {kvp.Key} value -> {kvp.Value}");
-                GXTTable.Rows.Add(kvp.Key, kvp.Value);
-            }
-        }
-        */
+        
         private void LoadDataAndTable(string filePath)
-        {
-            baseDictionary.Clear();
-            Utility.ReadTables(filePath, baseDictionary);
-            if (baseDictionary.Keys.Count > 0)
+        {            
+            gxtTableManager.ClearBaseDictionary();
+            FileUtils.ReadMissionTablesFromTextFile(filePath, gxtTableManager.GetBaseDictionary());
+            
+            if (gxtTableManager.GetBaseDictionary() != null && gxtTableManager.GetBaseDictionary().Keys.Count > 0)
             {
                 ClearGXTTableComboBoxElements();
                 setTableComboBoxItems();
@@ -353,25 +181,26 @@ namespace GTXEditor
                 //LoadDataToDataGridView(baseDictionary[comboBoxGXTTables.SelectedItem.ToString()]);
                 //EnableComponentsAfterTableLoaded();
                 ChangeCurrentFilePathLabelText(filePath);
-            }
+            }            
         }
 
         private void openGXTFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            string selectedFilePath = SelectGXTFile();
-            if (selectedFilePath != null)
+            string selectedFilePath = FileUtils.SelectGXTFile();
+            if (!string.IsNullOrEmpty(selectedFilePath))
             {
-                Log($"File selected path: {selectedFilePath}");
+                logger.PrintLogMessage(logBox, LogMessageTexts.FILE_SELECTED_PATH, selectedFilePath);
                 string newFilePath = CopySelectedGXTFileToGXTsFolder(selectedFilePath);
-                if (newFilePath != null)
+                if (!string.IsNullOrEmpty(newFilePath))
                 {
-                    Log($"Selected file copied to: {newFilePath}");
+                    logger.PrintLogMessage(logBox, LogMessageTexts.FILE_COPIED_TO_PATH, newFilePath);
                     string decompiledFilePath = DecompileSelectedGXTFile(newFilePath);
                     if (!string.IsNullOrEmpty(decompiledFilePath))
                     {
-                        Log($"Decompiled file path: {decompiledFilePath}");
-                        Log($"Reading decompiled file {decompiledFilePath} ...");
-                        ClearTable();
+                        logger.PrintLogMessage(logBox, LogMessageTexts.DECOMPILED_FILE_PATH, decompiledFilePath);
+                        logger.PrintLogMessage(logBox, LogMessageTexts.READING_DECOMPILED_FILE_PATH, decompiledFilePath);
+                        //ClearTable();
+                        gxtTableManager.ClearTable();
                         LoadDataAndTable(decompiledFilePath);
                         MessageBox.Show($"File '{selectedFilePath}' decompiled and read successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         /*
@@ -392,10 +221,10 @@ namespace GTXEditor
         private void refreshTableButton_Click(object sender, EventArgs e)
         {
             DisableComponentsBeforeTableLoaded();
-            Log("Refresing the table...");
+            logger.PrintLogMessage(logBox, LogMessageTexts.TABLE_REFRESHING);
             LoadDefaultTextForPreviewText();
             LoadDataAndTable(currentTextFilePath);
-            Log("The table refreshed.");
+            logger.PrintLogMessage(logBox, LogMessageTexts.TABLE_REFRESHED);
         }
 
         private void ClearGXTTableComboBoxElements()
@@ -405,18 +234,23 @@ namespace GTXEditor
 
         private void setTableComboBoxItems()
         {
-            foreach (string tableNames in baseDictionary.Keys)
+            if (gxtTableManager.GetBaseDictionary() != null)
             {
-                comboBoxGXTTables.Items.Add(tableNames);
-            }
+                foreach (string tableNames in gxtTableManager.GetBaseDictionary().Keys)
+                {
+                    comboBoxGXTTables.Items.Add(tableNames);
+                }
 
-            if (comboBoxGXTTables.Items.Count > 0)
-                comboBoxGXTTables.SelectedIndex = 0;
+                if (comboBoxGXTTables.Items.Count > 0)
+                {
+                    comboBoxGXTTables.SelectedIndex = 0;
+                }                    
+            }
         }
 
         private void textFonts_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Log($"Selected text font: {fontNames[textFonts.SelectedIndex]}, index: {textFonts.SelectedIndex}");
+            logger.PrintLogMessage(logBox, LogMessageTexts.SELECTED_TEXT_FONT, Constants.fontNames[textFonts.SelectedIndex], textFonts.SelectedIndex);
             Font customFont = new Font(privateFonts.Families[textFonts.SelectedIndex], 25, FontStyle.Regular);
             GXTValueTextBox.Font = customFont;
         }
@@ -436,7 +270,7 @@ namespace GTXEditor
 
         private void LoadDefaultTextForPreviewText()
         {
-            GXTValueTextBox.Text = PREVIEW_TEXT;
+            GXTValueTextBox.Text = Constants.PREVIEW_TEXT;
         }
 
         private void ChangePreviewText(string text)
@@ -452,7 +286,7 @@ namespace GTXEditor
             }
             else
             {
-                ShowWarningMessage(OPEN_GXT_FILE_WARNING_MESSAGE);
+                ShowWarningMessage(DialogBoxMessageTexts.OPEN_GXT_FILE);
             }
 
         }
@@ -462,7 +296,6 @@ namespace GTXEditor
             string keyword = searchKeyInput.Text.Trim();
             if (!string.IsNullOrEmpty(keyword))
             {
-
                 if (radioSearchKey.Checked)
                 {
                     SearchKeyAndSelectRow(keyword);
@@ -485,14 +318,12 @@ namespace GTXEditor
 
         private void radioSearchKey_CheckedChanged(object sender, EventArgs e)
         {
-            lastFoundRowIndex = -1;
-            lastSearchKeyword = "";
+            gxtTableManager.ResetLastSearchKeywordAndIndex("");            
         }
 
         private void radioSearchValue_CheckedChanged(object sender, EventArgs e)
         {
-            lastFoundRowIndex = -1;
-            lastSearchKeyword = "";
+            gxtTableManager.ResetLastSearchKeywordAndIndex("");
         }
 
         private void compileCurrentFileTogxtToolStripMenuItem_Click(object sender, EventArgs e)
@@ -505,19 +336,18 @@ namespace GTXEditor
 
         }
 
-
-
         private void currentFilePathLabel_Click(object sender, EventArgs e)
         {
-            string path = currentFilePathLabel.Text.Replace(CURRENT_FILE_LABEL, "");
+            string path = currentFilePathLabel.Text.Replace(Constants.CURRENT_FILE_LABEL, "");
             if (!string.IsNullOrEmpty(path))
             {
                 Clipboard.SetText(path);
-                MessageBox.Show($"'{path}' path copied to clipboard.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                string formattedText = DialogBoxMessageTexts.GetFormattedText(DialogBoxMessageTexts.PATH_COPIED_TO_CLIPBOARD, path);
+                MessageBox.Show(formattedText, DialogBoxMessageTexts.TITLE_INFO, MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             else
             {
-                ShowWarningMessage(OPEN_GXT_FILE_WARNING_MESSAGE);
+                ShowWarningMessage(DialogBoxMessageTexts.OPEN_GXT_FILE);
             }
         }
 
@@ -528,21 +358,24 @@ namespace GTXEditor
                 string message = Utility.RunOpenWithWindow(currentTextFilePath);
                 if (message.Length > 0)
                 {
-                    MessageBox.Show(message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show(message, DialogBoxMessageTexts.TITLE_ERROR, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             else
             {
-                ShowWarningMessage(OPEN_GXT_FILE_WARNING_MESSAGE);
+                ShowWarningMessage(DialogBoxMessageTexts.OPEN_GXT_FILE);
             }
 
         }
 
         private void comboBoxGXTTables_SelectedIndexChanged(object sender, EventArgs e)
         {
-            ClearTable();
-            LoadDataToDataGridView(baseDictionary[comboBoxGXTTables.SelectedItem.ToString()]);
+            this.Cursor = Cursors.WaitCursor;            
+            gxtTableManager.ClearTable();
+            LoadDefaultTextForPreviewText();            
+            gxtTableManager.LoadSelectedMissionTableToDataGridView(comboBoxGXTTables.SelectedItem.ToString());
             EnableComponentsAfterTableLoaded();
+            this.Cursor = Cursors.Default;
         }
     }
 

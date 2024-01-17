@@ -31,9 +31,9 @@ namespace GTXEditor
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel3 = new System.Windows.Forms.Panel();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
@@ -402,23 +402,23 @@ namespace GTXEditor
             // 
             // GXTTable
             // 
-            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopLeft;
-            dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.GXTTable.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle7;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopLeft;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.GXTTable.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
             this.GXTTable.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
             this.GXTTable.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.GXTTable.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.GXTTable.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.GXT_KEY,
             this.GXT_VALUE});
-            dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle9.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle9.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle9.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle9.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle9.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle9.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.GXTTable.DefaultCellStyle = dataGridViewCellStyle9;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.GXTTable.DefaultCellStyle = dataGridViewCellStyle3;
             this.GXTTable.Location = new System.Drawing.Point(6, 19);
             this.GXTTable.Name = "GXTTable";
             this.GXTTable.RowHeadersVisible = false;
@@ -429,8 +429,8 @@ namespace GTXEditor
             // GXT_KEY
             // 
             this.GXT_KEY.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            dataGridViewCellStyle8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.GXT_KEY.DefaultCellStyle = dataGridViewCellStyle8;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.GXT_KEY.DefaultCellStyle = dataGridViewCellStyle2;
             this.GXT_KEY.HeaderText = "GXT Key";
             this.GXT_KEY.MinimumWidth = 65;
             this.GXT_KEY.Name = "GXT_KEY";
@@ -497,6 +497,7 @@ namespace GTXEditor
             // 
             // menuStrip1
             // 
+            this.menuStrip1.BackColor = System.Drawing.SystemColors.Control;
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.aboutToolStripMenuItem});
@@ -536,7 +537,7 @@ namespace GTXEditor
             // 
             this.openGXTFileToolStripMenuItem.Image = global::GTXEditor.Properties.Resources.open_folder;
             this.openGXTFileToolStripMenuItem.Name = "openGXTFileToolStripMenuItem";
-            this.openGXTFileToolStripMenuItem.Size = new System.Drawing.Size(270, 22);
+            this.openGXTFileToolStripMenuItem.Size = new System.Drawing.Size(275, 22);
             this.openGXTFileToolStripMenuItem.Text = "Open a GXT File";
             this.openGXTFileToolStripMenuItem.Click += new System.EventHandler(this.openGXTFileToolStripMenuItem_Click);
             // 
@@ -544,7 +545,7 @@ namespace GTXEditor
             // 
             this.decompileGXTFilesToolStripMenuItem.Image = global::GTXEditor.Properties.Resources.convert;
             this.decompileGXTFilesToolStripMenuItem.Name = "decompileGXTFilesToolStripMenuItem";
-            this.decompileGXTFilesToolStripMenuItem.Size = new System.Drawing.Size(270, 22);
+            this.decompileGXTFilesToolStripMenuItem.Size = new System.Drawing.Size(275, 22);
             this.decompileGXTFilesToolStripMenuItem.Text = "Convert GXT Files to TXT Files";
             // 
             // compileCurrentFileTogxtToolStripMenuItem
@@ -559,14 +560,14 @@ namespace GTXEditor
             // 
             this.compileATextFileTogxtToolStripMenuItem.Image = global::GTXEditor.Properties.Resources.converter_gxt;
             this.compileATextFileTogxtToolStripMenuItem.Name = "compileATextFileTogxtToolStripMenuItem";
-            this.compileATextFileTogxtToolStripMenuItem.Size = new System.Drawing.Size(270, 22);
+            this.compileATextFileTogxtToolStripMenuItem.Size = new System.Drawing.Size(275, 22);
             this.compileATextFileTogxtToolStripMenuItem.Text = "Convert a Text File to GXT File";
             // 
             // saveCurrentGXTFileAstxtToolStripMenuItem
             // 
             this.saveCurrentGXTFileAstxtToolStripMenuItem.Image = global::GTXEditor.Properties.Resources.save;
             this.saveCurrentGXTFileAstxtToolStripMenuItem.Name = "saveCurrentGXTFileAstxtToolStripMenuItem";
-            this.saveCurrentGXTFileAstxtToolStripMenuItem.Size = new System.Drawing.Size(270, 22);
+            this.saveCurrentGXTFileAstxtToolStripMenuItem.Size = new System.Drawing.Size(275, 22);
             this.saveCurrentGXTFileAstxtToolStripMenuItem.Text = "Save The Current Table as TXT File";
             this.saveCurrentGXTFileAstxtToolStripMenuItem.Click += new System.EventHandler(this.saveCurrentGXTFileAstxtToolStripMenuItem_Click);
             // 
