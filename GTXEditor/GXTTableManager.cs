@@ -97,67 +97,16 @@ namespace GTXEditor
         }
 
         public int FindGxtKey(string keyword)
-        {
-            /*
-            if (keyword != lastSearchKeyword)
-            {
-                ResetLastSearchKeywordAndIndex(keyword);
-            }
-
-            int startRowIndex = this.lastFoundRowIndex + 1; // Start searching from the next row
-
-            for (int rowIndex = startRowIndex; rowIndex < gxt_table.Rows.Count; rowIndex++)
-            {
-                if (this.gxt_table.Rows[rowIndex].Cells[0].Value != null &&
-                    this.gxt_table.Rows[rowIndex].Cells[0].Value.ToString().ToLower().Contains(keyword.ToLower()))
-                {
-                    this.gxt_table.CurrentCell = this.gxt_table.Rows[rowIndex].Cells[0]; // Select the cell
-                    this.gxt_table.FirstDisplayedScrollingRowIndex = rowIndex; // Scroll to the row
-                    this.lastFoundRowIndex = rowIndex; // Update the last found index
-                    return this.lastFoundRowIndex; // Found and selected the row
-                }
-            }
-            return -1;
-            */
+        {            
             return SearchTableColumnAndSelectCell(keyword, Constants.GXT_KEY_COLUMN);
         }
 
         public int FindGxtValue(string keyword)
-        {
-            /*
-            if (keyword != lastSearchKeyword)
-            {
-                ResetLastSearchKeywordAndIndex(keyword);
-            }
-
-            int startRowIndex = lastFoundRowIndex + 1; // Start searching from the next row
-
-            for (int rowIndex = startRowIndex; rowIndex < this.gxt_table.Rows.Count; rowIndex++)
-            {
-                if (this.gxt_table.Rows[rowIndex].Cells[1].Value != null &&
-                    this.gxt_table.Rows[rowIndex].Cells[1].Value.ToString().ToLower().Contains(keyword.ToLower()))
-                {
-                    this.gxt_table.CurrentCell = this.gxt_table.Rows[rowIndex].Cells[1]; // Select the cell
-                    this.gxt_table.FirstDisplayedScrollingRowIndex = rowIndex; // Scroll to the row
-                    this.lastFoundRowIndex = rowIndex; // Update the last found index                   
-                    //ChangePreviewText(GXTTable.Rows[rowIndex].Cells[1].Value.ToString());
-                    return this.lastFoundRowIndex; // Found and selected the row
-                }
-            }
-            */
-            /*
-            int foundRowIndex = SearchTableColumn(keyword, Constants.GXT_VALUE_COLUMN);
-            if(foundRowIndex == -1)
-            {
-                return "";
-            }
-
-            return this.gxt_table.Rows[foundRowIndex].Cells[1].Value.ToString();
-            */
+        {            
             return SearchTableColumnAndSelectCell(keyword, Constants.GXT_VALUE_COLUMN);
         }
 
-        //0 -> GXT key, 1-> GXT value
+        //0 -> GXT key, 1-> GXT value for columnIndex
         public int SearchTableColumnAndSelectCell(string keyword, int columnIndex)
         {
             if (keyword != lastSearchKeyword)
@@ -174,8 +123,7 @@ namespace GTXEditor
                 {
                     this.gxt_table.CurrentCell = this.gxt_table.Rows[rowIndex].Cells[columnIndex]; // Select the cell
                     this.gxt_table.FirstDisplayedScrollingRowIndex = rowIndex; // Scroll to the row
-                    this.lastFoundRowIndex = rowIndex; // Update the last found index                   
-                    //ChangePreviewText(GXTTable.Rows[rowIndex].Cells[1].Value.ToString());
+                    this.lastFoundRowIndex = rowIndex; // Update the last found index                                       
                     return this.lastFoundRowIndex; // Found and selected the row
                 }
             }

@@ -10,7 +10,7 @@ namespace GTXEditor
     {
         private static readonly ProcessStartInfo decompilerStartInfo = new ProcessStartInfo
         {
-            FileName = "powershell.exe",
+            FileName = Constants.POWERSHELL_EXE,
             RedirectStandardOutput = true,
             RedirectStandardInput = true,
             UseShellExecute = false,
@@ -42,7 +42,7 @@ namespace GTXEditor
                         }
                         else
                         {
-                            if (line.Contains("AS THE LAST LABEL DOES NOT GET COMPILED!!"))
+                            if (line.Contains(Constants.LAST_LABEL_TEXT))
                             {
                                 dictionary[currentKey] += Environment.NewLine + line;
                             }
@@ -116,7 +116,7 @@ namespace GTXEditor
                 ProcessStartInfo startInfo = new ProcessStartInfo
                 {
                     UseShellExecute = true,
-                    FileName = "rundll32.exe",
+                    FileName = Constants.RUNDLL32_EXE,
                     Arguments = $"shell32.dll,OpenAs_RunDLL {arguments}"
                 };
 
@@ -136,9 +136,7 @@ namespace GTXEditor
 
         public static Dictionary<string, Dictionary<string, string>> ReadTables(string filePath, Dictionary<string, Dictionary<string, string>> baseDictionary)
         {
-            string[] lines = File.ReadAllLines(filePath);
-
-            //Dictionary<string, Dictionary<string, string>> baseDictionary = new Dictionary<string, Dictionary<string, string>>();
+            string[] lines = File.ReadAllLines(filePath);            
 
             string currentTable = "MAIN";
             string currentKey = null;
@@ -148,7 +146,7 @@ namespace GTXEditor
             {
                 string trimmedLine = line.Trim();
 
-                Match tableMatch = Regex.Match(trimmedLine, @"^{=+ MISSION TABLE (.+) =+}$");
+                Match tableMatch = Regex.Match(trimmedLine, Constants.MISSION_TABLE_REGEX); //@"^{=+ MISSION TABLE (.+) =+}$"
                 if (tableMatch.Success)
                 {
                     currentTable = tableMatch.Groups[1].Value;

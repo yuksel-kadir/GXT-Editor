@@ -15,6 +15,11 @@ namespace GTXEditor
         public const string PREVIEW_TEXT = "Preview Text";
         public const string MISSION_TABLE_LINE = "{=================================== MISSION TABLE AMBULAE ===================================}";
         public const string PLACEHOLDER_TEXT = "Placeholder Text";
+        public const string LAST_LABEL_TEXT = "AS THE LAST LABEL DOES NOT GET COMPILED!!";
+
+        public const string POWERSHELL_EXE = "powershell.exe";
+        public const string RUNDLL32_EXE = "rundll32.exe";
+
 
         public const string GTA_SA_DECOMPILE_ARGUMENTS = " -k CRC32 -w0 -h1";
         public const string GTA_IV_DECOMPILE_ARGUMENTS = " -h1 -k JENKINS -m0";
@@ -23,7 +28,7 @@ namespace GTXEditor
         public const string GXT_FILE_FILTER = "GXT Files|*.gxt";
 
         public const int GXT_KEY_COLUMN = 0;
-        public const int GXT_VALUE_COLUMN = 1;
+        public const int GXT_VALUE_COLUMN = 1;       
 
         public static readonly string[] fontNames = { "Bank Gothic", "Beckett", "GTA VC Regular", "Old English", "Rage Italic" };
     }
